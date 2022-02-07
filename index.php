@@ -19,7 +19,7 @@ $objFeedController = new AnnotationController();
 if (isset($uri[4])) {
     switch ($uri[4]) {
         case "groups":
-            $objFeedController->getGroups();
+            $objFeedController->performGroupsAction();
             break;
         case "byGroup":
             $objFeedController->getAnnotationsbyGroup();
@@ -33,6 +33,6 @@ if (isset($uri[4])) {
     }
 }
 else {
-    $objFeedController->getAllAnnotations();
+    $objFeedController->performAnnotationsAction();
 }
 ?>

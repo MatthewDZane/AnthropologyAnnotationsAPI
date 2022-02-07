@@ -18,18 +18,25 @@ class Position implements JsonSerializable {
         $this->z = $z;
     }
 
-    public static function jsonToPosition(string $positionJSON): Position {
-        $position = json_decode($positionJSON)->position;
-        
-        return new Position((float)$position->x, (float)$position->y, (float)$position->z);
-    }
-
     public function jsonSerialize() {
         return [
             "x" => $this->x,
             "y" => $this->y,
             "z" => $this->z
         ];
+    }
+
+    public static function isValidJson(stdClass|array $json): bool {
+        if (is_a($json, "array")) {
+            return false;
+        }
+
+        return property_exists($json, "x") && property_exists($json, "y") &&
+               property_exists($json, "z");
+    }
+
+    public static function jsonToPosition(stdclass $json): Position {
+        return new Position($json->x, $json->y, $json->z);
     }
 }
 ?>

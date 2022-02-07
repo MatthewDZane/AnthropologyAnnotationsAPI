@@ -130,5 +130,46 @@ class Annotation implements JsonSerializable  {
             "last_updated" => $this->lastUpdated,
         ];
     }
+
+    public static function isValidJson(stdClass|array $json): bool {
+        if (is_a($json, "array")) {
+            return false;
+        }
+
+        if (!(property_exists($json, "url") && 
+              property_exists($json, "title") &&
+              property_exists($json, "description") && 
+              property_exists($json, "description_link") &&
+              property_exists($json, "group_name") && 
+              property_exists($json, "camera_location") && 
+              property_exists($json, "look_at_point") && 
+              property_exists($json, "annotation_location"))) {
+            return false;
+        }
+
+        $cameraLocation = $json->camera_location;
+        $lookAtPoint = $json->look_at_point;
+        $annotationLocation = $json->annotation_location;
+
+        return Position::isValidJson($cameraLocation) && 
+               Position::isValidJson($lookAtPoint) &&
+               Position::isValidJson($annotationLocation);
+    }
+
+    public static function jsonToAnnotation(stdClass $json): Annotation {
+        $id = 0;
+        if (property_exists($json, "id")) {
+            $id = $json->id;
+        }
+
+        $cameraLocation = Position::jsonToPosition($json->camera_location);
+        $lookAtPoint = Position::jsonToPosition($json->look_at_point);
+        $annotationLocation = Position::jsonToPosition($json->annotation_location);
+
+        return new Annotation($id, $json->url, $json->title, $json->description,
+                              $json->description_link, $json->group_name, 
+                              $cameraLocation, $lookAtPoint,
+                              $annotationLocation, "");
+    }
 }
 ?>

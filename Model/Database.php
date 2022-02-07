@@ -7,6 +7,10 @@ class Database
 {
     protected mysqli $connection;
 
+    protected string $lastError = "";
+
+    public function getLastError() { return $this->lastError; }
+
     public function __construct()
     {
         try {

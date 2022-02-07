@@ -1,8 +1,7 @@
 <?php
 class AnnotationController extends BaseController
 {
-    
-    public function getGroups() {
+    public function performGroupsAction() {
         $responseData = "";
         $strErrorDescription = "";
         $strErrorHeader = "";
@@ -21,7 +20,7 @@ class AnnotationController extends BaseController
             }
         }
         else if ($requestMethod == "POST") {
-
+            
         } 
         else {
             $strErrorDescription = "Method not supported";
@@ -140,7 +139,7 @@ class AnnotationController extends BaseController
         $this->outputData($responseData, $strErrorDescription, $strErrorHeader);
     }
 
-    public function getAllAnnotations() {
+    public function performAnnotationsAction() {
         $responseData = "";
         $strErrorDescription = "";
         $strErrorHeader = "";
@@ -158,7 +157,35 @@ class AnnotationController extends BaseController
             }
         }
         else if ($requestMethod == "POST") {
+            $postData = file_get_contents("php://input");
+            if ($postData) {
+                $jsonData = json_decode($postData);
+                if ($postData && Annotation::isValidJson($jsonData)) {
+                    $annotation = Annotation::jsonToAnnotation($jsonData);
 
+                    if ($userModel->insertAnnotation($annotation)) {
+                        $annotation = $userModel->selectAnnotationsByLastInsertId();   
+                        $responseData = "{message:\"The annotation was inserted " .
+                                        "successfully.\", inserted_annotation:\"" .
+                                        json_encode($annotation) . "\"}";
+                    }
+                    else {
+                        $strErrorDescription = $userModel->getLastError() . 
+                                            ". Something went wrong! Please " .
+                                            "contact support.";
+                        $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                    }
+                }
+                else {
+                    $strErrorDescription = "JSON is missing one or more " . 
+                                           "required parameters.";
+                    $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+                }
+            }
+            else {
+                $strErrorDescription = "JSON is missing";
+                $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+            }
         } 
         else {
             $strErrorDescription = "Method not supported";
