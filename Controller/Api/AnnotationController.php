@@ -20,7 +20,33 @@ class AnnotationController extends BaseController
             }
         }
         else if ($requestMethod == "POST") {
-            
+            $postData = file_get_contents("php://input");
+            if ($postData) {
+                $jsonData = json_decode($postData);
+                if ($postData && Group::isValidJson($jsonData)) {
+                    $group = Group::jsonToGroup($jsonData);
+
+                    if ($userModel->insertGroup($group)) {
+                        $group = $userModel->selectGroup($group->getGroupName());   
+                        $responseData = "{message:\"The group was inserted " .
+                                        "successfully.\", inserted_group:\"" .
+                                        json_encode($group) . "\"}";
+                    }
+                    else {
+                        $strErrorDescription = $userModel->getLastError();
+                        $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                    }
+                }
+                else {
+                    $strErrorDescription = "JSON is missing one or more " . 
+                                           "required parameters.";
+                    $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+                }
+            }
+            else {
+                $strErrorDescription = "JSON is missing";
+                $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+            }
         } 
         else {
             $strErrorDescription = "Method not supported";
@@ -46,8 +72,7 @@ class AnnotationController extends BaseController
                         $groups = $userModel->selectAnnotationsByGroup($groupName);
                         $responseData = json_encode($groups);
                     } catch (Error $e) {
-                        $strErrorDescription = $e->getMessage() .
-                                "Something went wrong! Please contact support.";
+                        $strErrorDescription = $e->getMessage();
                         $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
                     }
                 }

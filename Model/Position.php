@@ -18,7 +18,7 @@ class Position implements JsonSerializable {
         $this->z = $z;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         return [
             "x" => $this->x,
             "y" => $this->y,

@@ -4,7 +4,7 @@ require __DIR__ . "/inc/bootstrap.php";
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri);
 
-$validAnnotationEndPoints = array("groups", "byID", "byGroup", "byUrl");
+$validAnnotationEndPoints = array("groups", "byId", "byGroup", "byUrl");
 
 // Verify that uri is valid
 if (!isset($uri[3]) || $uri[3] != 'annotations' || 

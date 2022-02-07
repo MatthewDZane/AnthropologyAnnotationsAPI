@@ -7,11 +7,11 @@
 ## Setup
 Open the "inc/config.php" file and fill in the Host Name, Username, Password, and Database Name.
 
-## Endpoints:
+## Endpoints
 ```
 annotations  - GET/POST
     /groups  - GET/POST
-    /byID    - GET/POST/PUT
+    /byId    - GET/POST/PUT
     /byGroup - GET
-    /byURL   - GET
+    /byUrl   - GET
 ```

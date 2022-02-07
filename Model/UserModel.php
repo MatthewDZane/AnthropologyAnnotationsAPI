@@ -305,7 +305,7 @@ class UserModel extends Database
      *              False if a group with the given name already existed, and
      *              therefore a new group was not created.
      */ 
-    private function insertGroup(Group $group): bool {
+    public function insertGroup(Group $group): bool {
         $query = "INSERT INTO annotation_group (group_name, sceneSettings)
                 VALUES (?, ?)";
 
@@ -313,16 +313,18 @@ class UserModel extends Database
             $stmt = $this->connection->prepare($query);
 
             if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
+                $this->lastError = "Unable to do prepared statement: " . $query;
+                return false;
             }
             
-            $stmt->bind_param("ss", $group->get_group_name(), $group->get_scene_settings());
+            $groupName = $group->getGroupName();
+            $sceneSettings = $group->getSceneSettings();
+            $stmt->bind_param("ss", $groupName, $sceneSettings);
 
             if ($stmt->execute() === TRUE) {
-                echo "New Group was added to annotation_group table<br>";
                 return true;
             } else {
-                echo "Error inserting group: " . $this->connection->error . "<br>";
+                $this->lastError = $this->connection->error;
                 return false;
             }
         } catch(Exception $e) {

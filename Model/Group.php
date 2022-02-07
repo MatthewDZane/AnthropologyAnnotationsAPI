@@ -3,19 +3,19 @@ class Group implements JsonSerializable {
     private string $groupName;
     private string $sceneSettings;
 
-    function get_group_name(): string { 
+    function getGroupName(): string { 
         return $this->groupName; 
     }
     
-    function get_scene_settings(): string { 
+    function getSceneSettings(): string { 
         return $this->sceneSettings; 
     }
 
-    function set_id(string $groupName): void { 
+    function setId(string $groupName): void { 
         $this->groupName = $groupName; 
     }
 
-    function set_scene_settings(string $sceneSettings): void { 
+    function setSceneSettings(string $sceneSettings): void { 
         $this->sceneSettings = $sceneSettings; 
     }
 
@@ -24,12 +24,25 @@ class Group implements JsonSerializable {
         $this->sceneSettings = $sceneSettings;
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             "group_name" => $this->groupName,
             "scene_settings" => $this->sceneSettings
         ];
+    }
+
+    public static function isValidJson(stdClass|array $json): bool {
+        if (is_a($json, "array")) {
+            return false;
+        }
+
+        return property_exists($json, "group_name") && 
+               property_exists($json, "scene_settings");
+    }
+
+    public static function jsonToGroup(stdclass $json): Group {
+        return new Group($json->group_name, $json->scene_settings);
     }
 }
 ?>

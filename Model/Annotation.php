@@ -115,8 +115,7 @@ class Annotation implements JsonSerializable  {
         $this->lastUpdated = $lastUpdated;
     }
 
-    public function jsonSerialize(): mixed
-    {
+    public function jsonSerialize(): array {
         return [
             "id" => $this->id,
             "url" =>$this->url,
@@ -144,6 +143,7 @@ class Annotation implements JsonSerializable  {
               property_exists($json, "camera_location") && 
               property_exists($json, "look_at_point") && 
               property_exists($json, "annotation_location"))) {
+                  echo "dfsd";
             return false;
         }
 
