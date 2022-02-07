@@ -10,8 +10,8 @@ Open the "inc/config.php" file and fill in the Host Name, Username, Password, an
 ## Endpoints
 ```
 annotations  - GET/POST
-    /groups  - GET/POST
-    /byId    - GET/POST/PUT
+    /groups  - GET/POST/PUT
+    /byId    - GET/PUT
     /byGroup - GET
     /byUrl   - GET
 ```

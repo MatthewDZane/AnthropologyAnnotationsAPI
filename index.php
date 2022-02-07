@@ -24,8 +24,8 @@ if (isset($uri[4])) {
         case "byGroup":
             $objFeedController->getAnnotationsbyGroup();
             break;
-        case "byID":
-            $objFeedController->getAnnotationbyID();
+        case "byId":
+            $objFeedController->performAnnotationbyIDAction();
             break;
         case "byUrl":
             $objFeedController->getAnnotationsbyURL();

@@ -23,14 +23,47 @@ class AnnotationController extends BaseController
             $postData = file_get_contents("php://input");
             if ($postData) {
                 $jsonData = json_decode($postData);
-                if ($postData && Group::isValidJson($jsonData)) {
+                if ($jsonData && Group::isValidJson($jsonData)) {
                     $group = Group::jsonToGroup($jsonData);
 
                     if ($userModel->insertGroup($group)) {
                         $group = $userModel->selectGroup($group->getGroupName());   
-                        $responseData = "{message:\"The group was inserted " .
-                                        "successfully.\", inserted_group:\"" .
-                                        json_encode($group) . "\"}";
+                        $responseData = json_encode(array("message" => "The " . 
+                                        "group was inserted successfully.",
+                                        "inserted_group" => $group));
+                    }
+                    else {
+                        $strErrorDescription = $userModel->getLastError();
+                        $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                    }
+                }
+                else {
+                    $strErrorDescription = "JSON is missing one or more " . 
+                                           "required parameters.";
+                    $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+                }
+            }
+            else {
+                $strErrorDescription = "JSON is missing";
+                $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+            }
+        } 
+        else if ($requestMethod == "PUT") {
+            $putData = file_get_contents("php://input");
+            if ($putData) {
+                $jsonData = json_decode($putData);
+                if ($jsonData && 
+                    property_exists($jsonData, "current_group_name") &&
+                    property_exists($jsonData, "group") &&
+                    Group::isValidJson($jsonData->group)) {
+                    $group = Group::jsonToGroup($jsonData->group);
+
+                    if ($userModel->updateGroup($jsonData->current_group_name, 
+                                                $group)) {
+                        $group = $userModel->selectGroup($group->getGroupName());   
+                        $responseData = json_encode(array("message" => "The " . 
+                                        "group was updated successfully.",
+                                        "updated_group" => $group));
                     }
                     else {
                         $strErrorDescription = $userModel->getLastError();
@@ -81,9 +114,6 @@ class AnnotationController extends BaseController
                     $strErrorHeader = "HTTP/1.1 400 Bad Request";
                 }
             }
-            else if ($requestMethod == "POST") {
-
-            } 
             else {
                 $strErrorDescription = "Method not supported";
                 $strErrorHeader = "HTTP/1.1 422 Unprocessable Entity";
@@ -92,7 +122,7 @@ class AnnotationController extends BaseController
         $this->outputData($responseData, $strErrorDescription, $strErrorHeader);
     }
 
-    public function getAnnotationbyID() {
+    public function performAnnotationbyIDAction() {
         $responseData = "";
         $strErrorDescription = "";
         $strErrorHeader = "";
@@ -105,8 +135,8 @@ class AnnotationController extends BaseController
                 array_key_exists("id", $arrQueryStringParams)) {
                 $id = $arrQueryStringParams["id"];
                 try {
-                    $annotations = $userModel->selectAnnotationsById($id);
-                    $responseData = json_encode($annotations);
+                    $annotation = $userModel->selectAnnotationsById($id);
+                    $responseData = json_encode($annotation);
                 } catch (Error $e) {
                     $strErrorDescription = $e->getMessage().'Something went wrong! Please contact support.';
                     $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
@@ -117,8 +147,38 @@ class AnnotationController extends BaseController
                 $strErrorHeader = 'HTTP/1.1 400 Bad Request';
             }
         }
-        else if ($requestMethod == "POST") {
+        else if ($requestMethod == "PUT") {
+            $putData = file_get_contents("php://input");
+            if ($putData) {
+                $jsonData = json_decode($putData);
+                if ($jsonData && property_exists($jsonData, "id") && 
+                    Annotation::isValidJson($jsonData)) {
+                    $annotation = Annotation::jsonToAnnotation($jsonData);
 
+                    if ($userModel->updateAnnotation($annotation)) {
+                        $annotation = $userModel->selectAnnotationsById(
+                                                    $annotation->getId());   
+                        $responseData = json_encode(array("message" => "The " . 
+                                        "annotation was updated successfully.",
+                                        "updated_annotation" => $annotation));
+                    }
+                    else {
+                        $strErrorDescription = $userModel->getLastError() . 
+                                            ". Something went wrong! Please " .
+                                            "contact support.";
+                        $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                    }
+                }
+                else {
+                    $strErrorDescription = "JSON is missing one or more " . 
+                                           "required parameters.";
+                    $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+                }
+            }
+            else {
+                $strErrorDescription = "JSON is missing";
+                $strErrorHeader = 'HTTP/1.1 400 Bad Request';
+            }
         } 
         else {
             $strErrorDescription = 'Method not supported';
@@ -153,9 +213,6 @@ class AnnotationController extends BaseController
                 $strErrorHeader = 'HTTP/1.1 400 Bad Request';
             }
         }
-        else if ($requestMethod == "POST") {
-
-        } 
         else {
             $strErrorDescription = 'Method not supported';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
@@ -185,14 +242,14 @@ class AnnotationController extends BaseController
             $postData = file_get_contents("php://input");
             if ($postData) {
                 $jsonData = json_decode($postData);
-                if ($postData && Annotation::isValidJson($jsonData)) {
+                if ($jsonData && Annotation::isValidJson($jsonData)) {
                     $annotation = Annotation::jsonToAnnotation($jsonData);
 
                     if ($userModel->insertAnnotation($annotation)) {
                         $annotation = $userModel->selectAnnotationsByLastInsertId();   
-                        $responseData = "{message:\"The annotation was inserted " .
-                                        "successfully.\", inserted_annotation:\"" .
-                                        json_encode($annotation) . "\"}";
+                        $responseData = json_encode(array("message" => "The " . 
+                                        "annotation was inserted successfully.",
+                                        "inserted_annotation" => $annotation));
                     }
                     else {
                         $strErrorDescription = $userModel->getLastError() . 

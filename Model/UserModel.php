@@ -71,9 +71,13 @@ class UserModel extends Database
         $annotations = [];
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                $cameraLocation = Position::jsonToPosition($row['camera_location']);
-                $cameraLookAtPoint = Position::jsonToPosition($row['camera_look_at_point']);
-                $annotationLocation = Position::jsonToPosition($row['annotation_location']);
+                $cameraLocationJson = json_decode($row['camera_location']);
+                $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
+                $annotationLocationJson = json_decode($row['annotation_location']);
+        
+                $cameraLocation = Position::jsonToPosition($cameraLocationJson);
+                $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
+                $annotationLocation = Position::jsonToPosition($annotationLocationJson);
                 
                 $annotations[count($annotations)] = 
                     new Annotation($row['id'], $row['url'], $row['title'], 
@@ -87,7 +91,7 @@ class UserModel extends Database
         return $annotations;
     }
 
-    public function selectAnnotationsById(int $id): array {
+    public function selectAnnotationsById(int $id): Annotation {
         $query = "SELECT * FROM annotation WHERE id = ?";
 
         $result = null;
@@ -107,27 +111,24 @@ class UserModel extends Database
             throw New Exception( $e->getMessage() );
         }	
 
-        $annotations = [];
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $cameraLocationJson = json_decode($row['camera_location']);
-                $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-                $annotationLocationJson = json_decode($row['annotation_location']);
+        $row = $result->fetch_assoc();
 
-                $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-                $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-                $annotationLocation = Position::jsonToPosition($annotationLocationJson); 
+        $cameraLocationJson = json_decode($row['camera_location']);
+        $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
+        $annotationLocationJson = json_decode($row['annotation_location']);
 
-                $annotations[count($annotations)] = 
-                    new Annotation($row['id'], $row['url'], $row['title'], 
-                                $row['description'], 
-                                $row['description_link'], $row['group_name'],
-                                $cameraLocation, $cameraLookAtPoint,
-                                $annotationLocation, $row['last_updated']);
-            }
-        }
+        $cameraLocation = Position::jsonToPosition($cameraLocationJson);
+        $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
+        $annotationLocation = Position::jsonToPosition($annotationLocationJson); 
 
-        return $annotations;
+        $annotation = new Annotation($row['id'], $row['url'], $row['title'], 
+                                     $row['description'], 
+                                     $row['description_link'], 
+                                     $row['group_name'],
+                                     $cameraLocation, $cameraLookAtPoint,
+                                     $annotationLocation, $row['last_updated']);        
+
+        return $annotation;
     }
 
     public function selectAnnotationsByLastInsertId(): Annotation {
@@ -328,7 +329,8 @@ class UserModel extends Database
                 return false;
             }
         } catch(Exception $e) {
-            throw New Exception( $e->getMessage() );
+            $this->lastError = $e->getMessage();
+            return false;
         }	
     }
 
@@ -376,7 +378,7 @@ class UserModel extends Database
         }	
     }
 
-    private function updateAnnotation(int $id, Annotation $annotation): bool {
+    public function updateAnnotation(Annotation $annotation): bool {
         $query = "UPDATE annotation SET url = ?, title = ?, description = ?, 
                 description_link = ?, group_name = ?, camera_location = ?,
                 camera_look_at_point = ?, annotation_location = ? WHERE id= ?";
@@ -385,8 +387,16 @@ class UserModel extends Database
             $stmt = $this->connection->prepare($query);
 
             if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
+                $this->lastError = "Unable to do prepared statement: " . $query;
+                return false;
             }
+
+            $url = $annotation->getUrl();
+            $title = $annotation->getTitle();
+            $description = $annotation->getDescription();
+            $descriptionLink = $annotation->getDescriptionLink();
+            $groupName = $annotation->getGroupName();
+            $id = $annotation->getId();
 
             # create JSONs for the 3D points
             $cameraLocationJSON = json_encode($annotation->getCameraLocation());
@@ -395,23 +405,48 @@ class UserModel extends Database
 
             $annotationLocationJSON = json_encode($annotation->getAnnotationLocation());
             
-            $stmt->bind_param("ssssssssi", $annotation->getUrl(), 
-                            $annotation->getTitle(), 
-                            $annotation->getDescription(),
-                            $annotation->getDescriptionLink(),
-                            $annotation->getGroupName(),
-                            $cameraLocationJSON, $lookAtPointJSON, 
-                            $annotationLocationJSON, $id);
+            $stmt->bind_param("ssssssssi", $url, $title, $description, 
+                              $descriptionLink, $groupName, 
+                              $cameraLocationJSON, $lookAtPointJSON, 
+                              $annotationLocationJSON, $id);
 
             if ($stmt->execute() === TRUE) {
-                echo "New Group was added to annotation_group table<br>";
                 return true;
             } else {
-                echo "Error inserting group: " . $this->connection->error . "<br>";
+                $this->lastError = $this->connection->error;
                 return false;
             }
         } catch(Exception $e) {
-            throw New Exception($e->getMessage());
+            $this->lastError = $e->getMessage();
+            return false;
+        }	
+    }
+
+    public function updateGroup($currentGroupName, Group $group): bool {
+        $query = "UPDATE annotation_group SET group_name = ?, sceneSettings = ?
+                  WHERE group_name = ?";
+
+        try {
+            $stmt = $this->connection->prepare($query);
+
+            if($stmt === false) {
+                $this->lastError = "Unable to do prepared statement: " . $query;
+                return false;
+            }
+            
+            $groupName = $group->getGroupName();
+            $sceneSettings = $group->getSceneSettings();
+            $stmt->bind_param("sss", $groupName, $sceneSettings, $currentGroupName);
+
+            if ($stmt->execute() === TRUE) {
+                return true;
+            } else {
+                $this->lastError = $this->connection->error;
+                return false;
+            }
+        } catch(Exception $e) {
+            $this->lastError = $e->getMessage();
+            return false;
         }	
     }
 }

@@ -143,7 +143,6 @@ class Annotation implements JsonSerializable  {
               property_exists($json, "camera_location") && 
               property_exists($json, "look_at_point") && 
               property_exists($json, "annotation_location"))) {
-                  echo "dfsd";
             return false;
         }
 
