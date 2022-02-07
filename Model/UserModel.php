@@ -24,13 +24,7 @@ class UserModel extends Database
         $result = null;
         try {
             $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
-            }
-            
             $stmt->bind_param("s", $groupName);
-
             $stmt->execute();
 
             $result = $stmt->get_result();
@@ -54,13 +48,7 @@ class UserModel extends Database
         $result = null;
         try {
             $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
-            }
-            
             $stmt->bind_param("s", $groupName);
-
             $stmt->execute();
 
             $result = $stmt->get_result();
@@ -96,14 +84,8 @@ class UserModel extends Database
 
         $result = null;
         try {
-            $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
-            }
-            
+            $stmt = $this->connection->prepare($query);  
             $stmt->bind_param("i", $id);
-
             $stmt->execute();
 
             $result = $stmt->get_result();
@@ -162,13 +144,7 @@ class UserModel extends Database
         $result = null;
         try {
             $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
-            }
-            
             $stmt->bind_param("s", $url);
-
             $stmt->execute();
 
             $result = $stmt->get_result();
@@ -292,7 +268,6 @@ class UserModel extends Database
         return $this->insertAnnotation($annotation);
     }
 
-
     /**
      * Checks if there exists a group entry with the given name. Creates a new
      * entry with the given name and current scene settings if it does not
@@ -312,11 +287,6 @@ class UserModel extends Database
 
         try {
             $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                $this->lastError = "Unable to do prepared statement: " . $query;
-                return false;
-            }
             
             $groupName = $group->getGroupName();
             $sceneSettings = $group->getSceneSettings();
@@ -343,11 +313,6 @@ class UserModel extends Database
         try {
             $stmt = $this->connection->prepare($query);
 
-            if($stmt === false) {
-                $this->lastError = "Unable to do prepared statement: " . $query;
-                return false;
-            }
-
             $url = $annotation->getUrl();
             $title = $annotation->getTitle(); 
             $description = $annotation->getDescription();
@@ -356,9 +321,7 @@ class UserModel extends Database
 
             # create JSONs for the 3D points
             $cameraLocationJSON = json_encode($annotation->getCameraLocation());
-
             $lookAtPointJSON = json_encode($annotation->getLookAtPoint());
-
             $annotationLocationJSON = json_encode($annotation->getAnnotationLocation());
 
             $stmt->bind_param("ssssssss", $url, $title, $description,
@@ -386,11 +349,6 @@ class UserModel extends Database
         try {
             $stmt = $this->connection->prepare($query);
 
-            if($stmt === false) {
-                $this->lastError = "Unable to do prepared statement: " . $query;
-                return false;
-            }
-
             $url = $annotation->getUrl();
             $title = $annotation->getTitle();
             $description = $annotation->getDescription();
@@ -400,9 +358,7 @@ class UserModel extends Database
 
             # create JSONs for the 3D points
             $cameraLocationJSON = json_encode($annotation->getCameraLocation());
-
             $lookAtPointJSON = json_encode($annotation->getLookAtPoint());
-
             $annotationLocationJSON = json_encode($annotation->getAnnotationLocation());
             
             $stmt->bind_param("ssssssssi", $url, $title, $description, 
@@ -428,11 +384,6 @@ class UserModel extends Database
 
         try {
             $stmt = $this->connection->prepare($query);
-
-            if($stmt === false) {
-                $this->lastError = "Unable to do prepared statement: " . $query;
-                return false;
-            }
             
             $groupName = $group->getGroupName();
             $sceneSettings = $group->getSceneSettings();
