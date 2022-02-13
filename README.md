@@ -3,7 +3,10 @@
 # Table of Contents
 - [Setup](#setup)
     - [XAMPP](#xampp)
-- [Endpoints](#endpoints)
+- [API Endpoints](#api_endpoints)
+- [Database](#database)
+    - [Annotations](#annotations)
+    - [Annotations_Group](#annotation_group)
 
 ## Setup
 Open the "inc/config.php" file and fill in the Host Name, Username, Password, and Database Name.
@@ -18,99 +21,581 @@ Open the "inc/config.php" file and fill in the Host Name, Username, Password, an
  {HostName}/{DesiredName}/index.php/{EndPoint}
 ```
 
-## Endpoints
-- annotations  
-    - GET
-        - Returns a list of all the annotations.
-    - POST
-        - Inserts the given annotation into the database
-        - Example Request Body
-            ```
-            {
-                "url": "Test Url",
-                "title": "Test Title 1",
-                "description": "Test Description 1",
-                "description_link": "Test Description Link 1",
-                "group_name": "Test Group Name",
-                "camera_location": {
-                    "x": 1,
-                    "y": 2,
-                    "z": 3
-                },
-                "look_at_point": {
-                    "x": 4,
-                    "y": 5,
-                    "z": 6
-                },
-                "annotation_location": {
-                    "x": 7,
-                    "y": 8,
-                    "z": 9
-                }
-            }
-            ```
-- annotations/groups  
-    - GET
-        - Returns a list of all the groups.
-    - POST
-        - Inserts the given group into the database.
-        - Example Request Body
-            ```
-            {
-                "group_name": "New Group",
-                "scene_settings": "{\"setting\": \"something\"}"
-            }
-            ```
-    - PUT
-        - Updates the group which has the given current group name with the given group data.
-        - Example Request Body
-            ```
-            {
-                "current_group_name": "",
-                "group": {
-                    "group_name": "Updated Group",
-                    "scene_settings": "{ \"setting\": \"something\" }"
-                }
-            }
-            ```
-- annotations/byId    
-    - GET
-        - Returns a single annotation with the given ID.
-        - Requires id parameter.
-    - PUT
-        - Updates the the annotation which has the given ID with the rest of the annotation data.
-        - Example Request Body
-            ```
-            {
-                "id": 1,
-                "url": "Updated Url",
-                "title": "Updated Title",
-                "description": "Updated Description",
-                "description_link": "Updated Description Link",
-                "group_name": "Updated Group Name",
-                "camera_location": {
-                    "x": 11,
-                    "y": 22,
-                    "z": 33
-                },
-                "look_at_point": {
-                    "x": 44,
-                    "y": 55,
-                    "z": 66
-                },
-                "annotation_location": {
-                    "x": 77,
-                    "y": 88,
-                    "z": 99
-                }
-            }
-            ```
-- annotations/byGroup 
-    - GET
-        - Returns a list of annotations which have the given group name.
-        - Requires group_name parameter.
-- annotations/byUrl   
-    - GET
-        - Returns a list of annotations which have the given url.
-        - Requires url parameter.
+## API Endpoints
 
+These endpoints allow a user to read and modify the contents of the database.
+
+### GET
+`HostName/DesiredName` [/annotations](#get-annotations) <br/>
+`HostName/DesiredName` [/annotations/groups](#get-annotationsgroups) <br/>
+`HostName/DesiredName` [/annotations/byId](#get-annotationsbyid) <br/>
+`HostName/DesiredName` [/annotations/byGroup](#get-annotationsbygroup) <br/>
+`HostName/DesiredName` [/annotations/byUrl](#get-annotationsbyurl) <br/>
+
+### POST
+`HostName/DesiredName` [/annotations](#post-annotations) <br/>
+`HostName/DesiredName` [/annotations/groups](#post-annotationsgroups) <br/>
+
+### PUT
+`HostName/DesiredName` [/annotations/groups](#put-annotationsgroups) <br/>
+`HostName/DesiredName` [/annotations/byId](#put-annotationsbyid) <br/>
+
+
+### GET /annotations
+Get all of the annotations in the database.
+
+**Parameters**
+
+No Parameters.            
+
+**Response**
+```
+// There are no annotations in the table
+[]
+
+or
+
+// There are at least one annotation in the table
+[
+    {
+        "id": 1,
+        "url": "test/url/1.html",
+        "title": "Test Title 1",
+        "description": "Test Description 1",
+        "description_link": "Test Description Link 1",
+        "group_name": "Test Group Name 1",
+        "camera_location": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+        },
+        "look_at_point": {
+            "x": 4,
+            "y": 5,
+            "z": 6
+        },
+        "annotation_location": {
+            "x": 7,
+            "y": 8,
+            "z": 9
+        },
+        "last_updated": "2022-02-02 22:22:22"
+    },
+    ...
+    {
+        "id": 5,
+        "url": "test/url/5.html.php",
+        "title": "Test Title 5",
+        "description": "Test Description 5",
+        "description_link": "Test Description Link 5",
+        "group_name": "Test Group Name 5",
+        "camera_location": {
+            "x": 9,
+            "y": 8,
+            "z": 7
+        },
+        "look_at_point": {
+            "x": 6,
+            "y": 5,
+            "z": 4
+        },
+        "annotation_location": {
+            "x": 3,
+            "y": 2,
+            "z": 1
+        },
+        "last_updated": "2022-05-05 15:55:55"
+    }
+]
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### GET /annotations/groups
+Get all of the groups in the database.
+
+**Parameters**
+
+No Parameters. 
+
+**Response**
+```
+// There are no groups.
+[]
+
+or
+
+// There is at least one group in the table.
+[
+    {
+        "group_name": "Group 1",
+        "scene_settings": "{\"setting 1\": \"value 1\"}"
+    },
+    ...
+    {
+        "group_name": "Group 2",
+        "scene_settings": "{ \"setting 2\": \"value 2\" }"
+    }
+]
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### GET /annotations/byId
+Get the annotation with the given ID.
+
+**Parameters**
+| Name | Required | Type | Description |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `id` | required | int  | The id of the annotation to query. |
+
+**Response**
+```
+// There is no annotation with the given id.
+{
+    "message": "There is not annotation with the given id"
+}
+
+or
+
+// There is an annotation with the given id.
+{
+    "id": 1,
+    "url": "test/url/1.html",
+    "title": "Test Title 1",
+    "description": "Test Description 1",
+    "description_link": "Test Description Link 1",
+    "group_name": "Test Group Name 1",
+    "camera_location": {
+        "x": 1,
+        "y": 2,
+        "z": 3
+    },
+    "look_at_point": {
+        "x": 4,
+        "y": 5,
+        "z": 6
+    },
+    "annotation_location": {
+        "x": 7,
+        "y": 8,
+        "z": 9
+    },
+    "last_updated": "2022-02-02 22:22:22"
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### GET /annotations/byGroup
+Get all the annotations in the given group.
+
+**Parameters**
+| Name | Required | Type | Description |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `group_name` | required | string  | The name of the group to query annotations by. |
+
+**Response**
+```
+// There are no annotation with the given group name.
+[]
+
+or
+
+// There is at least one annotation with the given group name.
+[
+    {
+        "id": 1,
+        "url": "test/url/1.html",
+        "title": "Test Title 1",
+        "description": "Test Description 1",
+        "description_link": "Test Description Link 1",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+        },
+        "look_at_point": {
+            "x": 4,
+            "y": 5,
+            "z": 6
+        },
+        "annotation_location": {
+            "x": 7,
+            "y": 8,
+            "z": 9
+        },
+        "last_updated": "2022-02-02 22:22:22"
+    },
+    ...
+    {
+        "id": 5,
+        "url": "test/url/5.html",
+        "title": "Test Title 5",
+        "description": "Test Description 5",
+        "description_link": "Test Description Link 5",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 9,
+            "y": 8,
+            "z": 7
+        },
+        "look_at_point": {
+            "x": 6,
+            "y": 5,
+            "z": 4
+        },
+        "annotation_location": {
+            "x": 3,
+            "y": 2,
+            "z": 1
+        },
+        "last_updated": "2022-05-05 15:55:55"
+    }
+]
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### GET /annotations/byUrl
+Get all the annotations in the given url.
+
+**Parameters**
+| Name | Required | Type | Description |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `url` | required | string  | The url to query annotations by. |
+
+**Response**
+```
+// There are no annotations with the given url.
+[]
+
+or
+
+// There is at least one annotation with the given url.
+[
+    {
+        "id": 1,
+        "url": "test/url.html",
+        "title": "Test Title 1",
+        "description": "Test Description 1",
+        "description_link": "Test Description Link 1",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+        },
+        "look_at_point": {
+            "x": 4,
+            "y": 5,
+            "z": 6
+        },
+        "annotation_location": {
+            "x": 7,
+            "y": 8,
+            "z": 9
+        },
+        "last_updated": "2022-02-02 22:22:22"
+    },
+    ...
+    {
+        "id": 5,
+        "url": "test/url.html",
+        "title": "Test Title 5",
+        "description": "Test Description 5",
+        "description_link": "Test Description Link 5",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 9,
+            "y": 8,
+            "z": 7
+        },
+        "look_at_point": {
+            "x": 6,
+            "y": 5,
+            "z": 4
+        },
+        "annotation_location": {
+            "x": 3,
+            "y": 2,
+            "z": 1
+        },
+        "last_updated": "2022-05-05 15:55:55"
+    }
+]
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### POST /annotations
+Inserts a new annotation record into the database.
+
+**Body**
+| Name | Required | Type | Description |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `url`                 | required | string | The url that the annotation is    located. |
+|     `title`               | required | string | The title of the annotation.  |
+|     `description`         | required | string | The description of the annotation. |
+|     `description_link`    | required | string | The description link of the annotation. |
+|     `group_name`          | required | string | The name of the group that the annotation is associated with. |
+|     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `annotation_location` | required | json   | A json containing 3D coordinates of the annotation camera location, where x, y.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+
+Example Body:
+```
+{
+    "url": "Test Url",
+    "title": "Test Title",
+    "description": "Test Description",
+    "description_link": "Test Description Link",
+    "group_name": "Test Group Name",
+    "camera_location": {
+        "x": 1,
+        "y": 2,
+        "z": 3
+    },
+    "look_at_point": {
+        "x": 4,
+        "y": 5,
+        "z": 6
+    },
+    "annotation_location": {
+        "x": 7,
+        "y": 8,
+        "z": 9
+    }
+}
+
+```
+
+
+**Response**
+
+```
+// The annotation record was inserted successfully.
+{
+    "message": "The annotation was inserted successfully.",
+    "inserted_annotation": {
+        "id": 1,
+        "url": "Test Url",
+        "title": "Test Title",
+        "description": "Test Description",
+        "description_link": "Test Description Link",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+        },
+        "look_at_point": {
+            "x": 4,
+            "y": 5,
+            "z": 6
+        },
+        "annotation_location": {
+            "x": 7,
+            "y": 8,
+            "z": 9
+        },
+        "last_updated": "2022-02-13 13:19:08"
+    }
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### POST /annotations/groups
+Inserts a new group record into the database.
+
+**Body**
+|          Name | Required |  Type   | Description                                                                                                                                                           |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `group_name`     | required | string | The name of the group. |
+|     `scene_settings` | required | string | The setting of the scene associated with the group. <br/><br/> This string is to be parsed as a json by the front end. It is assumed that the frontend will generate a string in the form a json, so it is unnecessary to reformat this string value. <br/><br/> There will typically be backslashes to preserve the inner quotation characters. Ex: "{\\"setting\\": \\"value\\"}"|
+
+Example Body:
+```
+{
+    "group_name": "New Group",
+    "scene_settings": "{\"setting\\": \"value\"}"
+}
+
+```
+
+
+**Response**
+
+```
+// The annotation record was inserted successfully.
+{
+    "message": "The group was inserted successfully.",
+    "inserted_group": {
+        "group_name": "New Group",
+        "scene_settings": "{\"setting\\": \"value\"}"
+    }
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### PUT /annotations/groups
+Updates the given group record with the given group data.
+
+**Body**
+| Name | Required |  Type | Description                        
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `id`                  | required | string | The ID of the annotation to update. |
+|     `url`                 | required | string | The url that the annotation is    located. |
+|     `title`               | required | string | The title of the annotation.  |
+|     `description`         | required | string | The description of the annotation. |
+|     `description_link`    | required | string | The description link of the annotation. |
+|     `group_name`          | required | string | The name of the group that the annotation is associated with. |
+|     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `annotation_location` | required | json   | A json containing 3D coordinates of the annotation camera location, where x, y.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+
+Example Body:
+```
+{
+    "id" : 1,
+    "url": "Test Url",
+    "title": "Test Title",
+    "description": "Test Description",
+    "description_link": "Test Description Link",
+    "group_name": "Test Group Name",
+    "camera_location": {
+        "x": 1,
+        "y": 2,
+        "z": 3
+    },
+    "look_at_point": {
+        "x": 4,
+        "y": 5,
+        "z": 6
+    },
+    "annotation_location": {
+        "x": 7,
+        "y": 8,
+        "z": 9
+    }
+}
+```
+
+**Response**
+```
+// The annotation record was inserted successfully.
+{
+    "message": "The annotation was updated successfully.",
+    "inserted_annotation": {
+        "id": 1,
+        "url": "Test Url",
+        "title": "Test Title",
+        "description": "Test Description",
+        "description_link": "Test Description Link",
+        "group_name": "Test Group Name",
+        "camera_location": {
+            "x": 1,
+            "y": 2,
+            "z": 3
+        },
+        "look_at_point": {
+            "x": 4,
+            "y": 5,
+            "z": 6
+        },
+        "annotation_location": {
+            "x": 7,
+            "y": 8,
+            "z": 9
+        },
+        "last_updated": "2022-02-13 13:19:08"
+    }
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### PUT /annotations/byId
+Updates the annotation record with the given ID with the given annotation data.
+
+**Body**
+| Name | Required | Type | Description |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `current_group_name` | required | string | The current name of the group to update. |
+| `group_name`         | required | string | The new name of the group. |
+| `scene_settings`     | required | string | The new settings of the scene associated with the group. <br/><br/> This string is to be parsed as a json by the front end. It is assumed that the frontend will generate a string in the form a json, so it is unnecessary to reformat this string value. <br/><br/> There will typically be backslashes to preserve the inner quotation characters. Ex: "{\\"setting\\": \\"value\\"}"|
+
+Example Body:
+```
+{
+    "current_group_name": "Old Group"
+    {
+        "group_name": "Updated Group",
+        "scene_settings": "{\"setting\\": \"value\"}"
+    }
+}
+```
+
+
+**Response**
+
+```
+// The group record was updated successfully.
+{
+    "message": "The group was updated successfully.",
+    "updated_group": {
+        "group_name": "Updated Group",
+        "scene_settings": "{\"setting\\": \"value\"}"
+    }
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
