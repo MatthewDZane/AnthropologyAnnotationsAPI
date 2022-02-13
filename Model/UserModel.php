@@ -42,6 +42,45 @@ class UserModel extends Database
         return $group;
     }
 
+    public function selectAnnotationById(int $id): Annotation|null {
+        $query = "SELECT * FROM annotation WHERE id = ?";
+
+        $result = null;
+        try {
+            $stmt = $this->connection->prepare($query);  
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+        } catch(Exception $e) {
+            $this->lastError = $e->getMessage();
+            return null;
+        }	
+
+        $row = $result->fetch_assoc();
+
+        if ($row == null) {
+            return null;
+        }
+
+        $cameraLocationJson = json_decode($row['camera_location']);
+        $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
+        $annotationLocationJson = json_decode($row['annotation_location']);
+
+        $cameraLocation = Position::jsonToPosition($cameraLocationJson);
+        $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
+        $annotationLocation = Position::jsonToPosition($annotationLocationJson); 
+
+        $annotation = new Annotation($row['id'], $row['url'], $row['title'], 
+                                     $row['description'], 
+                                     $row['description_link'], 
+                                     $row['group_name'],
+                                     $cameraLocation, $cameraLookAtPoint,
+                                     $annotationLocation, $row['last_updated']);        
+
+        return $annotation;
+    }
+
     public function selectAnnotationsByGroup(string $groupName): array {
         $query = "SELECT * FROM annotation WHERE group_name = ?";
 
@@ -77,40 +116,6 @@ class UserModel extends Database
         }
 
         return $annotations;
-    }
-
-    public function selectAnnotationsById(int $id): Annotation {
-        $query = "SELECT * FROM annotation WHERE id = ?";
-
-        $result = null;
-        try {
-            $stmt = $this->connection->prepare($query);  
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-
-            $result = $stmt->get_result();
-        } catch(Exception $e) {
-            throw New Exception( $e->getMessage() );
-        }	
-
-        $row = $result->fetch_assoc();
-
-        $cameraLocationJson = json_decode($row['camera_location']);
-        $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-        $annotationLocationJson = json_decode($row['annotation_location']);
-
-        $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-        $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-        $annotationLocation = Position::jsonToPosition($annotationLocationJson); 
-
-        $annotation = new Annotation($row['id'], $row['url'], $row['title'], 
-                                     $row['description'], 
-                                     $row['description_link'], 
-                                     $row['group_name'],
-                                     $cameraLocation, $cameraLookAtPoint,
-                                     $annotationLocation, $row['last_updated']);        
-
-        return $annotation;
     }
 
     public function selectAnnotationsByLastInsertId(): Annotation {
