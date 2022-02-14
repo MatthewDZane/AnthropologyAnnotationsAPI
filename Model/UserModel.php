@@ -18,7 +18,7 @@ class UserModel extends Database
         return $groups;
     }
 
-    public function selectGroup(string $groupName): Group {
+    public function selectGroup(string $groupName): Group|null {
         $query = "SELECT * FROM annotation_group WHERE group_name = ?";
 
         $result = null;
@@ -34,6 +34,10 @@ class UserModel extends Database
 
         $row = $result->fetch_assoc();
 
+        if ($row == null) {
+            return null;
+        }
+        
         $group = null;
         try {
             $group = new Group($row['group_name'], $row['sceneSettings']);
