@@ -27,18 +27,19 @@ These endpoints allow a user to read and modify the contents of the database.
 
 ### GET
 `HostName/DesiredName` [/annotations](#get-annotations) <br/>
-`HostName/DesiredName` [/annotations/groups](#get-annotationsgroups) <br/>
 `HostName/DesiredName` [/annotations/byId](#get-annotationsbyid) <br/>
 `HostName/DesiredName` [/annotations/byGroup](#get-annotationsbygroup) <br/>
 `HostName/DesiredName` [/annotations/byUrl](#get-annotationsbyurl) <br/>
+`HostName/DesiredName` [/groups](#get-groups) <br/>
+`HostName/DesiredName` [/groups/byGroupName](#get-groupsbygroupname) <br/>
 
 ### POST
 `HostName/DesiredName` [/annotations](#post-annotations) <br/>
-`HostName/DesiredName` [/annotations/groups](#post-annotationsgroups) <br/>
+`HostName/DesiredName` [/groups](#post-groups) <br/>
 
 ### PUT
-`HostName/DesiredName` [/annotations/groups](#put-annotationsgroups) <br/>
 `HostName/DesiredName` [/annotations/byId](#put-annotationsbyid) <br/>
+`HostName/DesiredName` [/groups/byGroupName](#put-groupsbygroupname) <br/>
 
 
 ### GET /annotations
@@ -116,54 +117,19 @@ or if an error occured
 ```
 ___
 
-### GET /annotations/groups
-Get all of the groups in the database.
-
-**Parameters**
-
-No Parameters. 
-
-**Response**
-```
-// There are no groups.
-[]
-
-or
-
-// There is at least one group in the table.
-[
-    {
-        "group_name": "Group 1",
-        "scene_settings": "{\"setting 1\": \"value 1\"}"
-    },
-    ...
-    {
-        "group_name": "Group 2",
-        "scene_settings": "{ \"setting 2\": \"value 2\" }"
-    }
-]
-
-or if an error occured
-
-{
-    "error": "An error message"
-}
-```
-___
-
 ### GET /annotations/byId
 Get the annotation with the given ID.
 
 **Parameters**
 | Name | Required | Type | Description |
-| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     `id` | required | int  | The id of the annotation to query. |
+| ----:|:--------:|:----:|:----------- |
+| `id` | required | int  | The id of the annotation to query. |
 
 **Response**
 ```
 // There is no annotation with the given id.
 {
-    "message": "There is not annotation with the given id"
+    "message": "There is no annotation with the given id"
 }
 
 or
@@ -207,8 +173,8 @@ Get all the annotations in the given group.
 
 **Parameters**
 | Name | Required | Type | Description |
-| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     `group_name` | required | string  | The name of the group to query annotations by. |
+| ----:|:--------:|:----:|:----------- |
+| `group_name` | required | string  | The name of the group to query annotations by. |
 
 **Response**
 ```
@@ -283,8 +249,8 @@ Get all the annotations in the given url.
 
 **Parameters**
 | Name | Required | Type | Description |
-| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     `url` | required | string  | The url to query annotations by. |
+| ----:|:--------:|:----:| ----------- |
+| `url` | required | string  | The url to query annotations by. |
 
 **Response**
 ```
@@ -354,12 +320,79 @@ or if an error occured
 ```
 ___
 
+### GET /groups
+Get all of the groups in the database.
+
+**Parameters**
+| Name | Required | Type | Description |
+| ----:|:--------:|:----:| ----------- |
+| `group_name` | required | string  | The name of the group to query. |
+
+**Response**
+```
+// There are no groups.
+[]
+
+or
+
+// There is at least one group in the table.
+[
+    {
+        "group_name": "Group 1",
+        "scene_settings": "{\"setting 1\": \"value 1\"}"
+    },
+    ...
+    {
+        "group_name": "Group 2",
+        "scene_settings": "{ \"setting 2\": \"value 2\" }"
+    }
+]
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
+### GET /groups/byGroupName
+Get all of the groups in the database.
+
+**Parameters**
+| Name | Required | Type | Description |
+| ----:|:--------:|:----:| ----------- |
+| `group_name` | required | string  | The name of the group to query. |
+
+**Response**
+```
+// There is no group with the given name.
+{
+    "message": "There is no group with the given name."
+}
+
+or
+
+// There is a group with the given group name
+{
+    "group_name": "Group 1",
+    "scene_settings": "{\"setting 1\": \"value 1\"}"
+}
+
+or if an error occured
+
+{
+    "error": "An error message"
+}
+```
+___
+
 ### POST /annotations
 Inserts a new annotation record into the database.
 
 **Body**
 | Name | Required | Type | Description |
-| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ----:|:--------:|:----:| ----------- |
 |     `url`                 | required | string | The url that the annotation is    located. |
 |     `title`               | required | string | The title of the annotation.  |
 |     `description`         | required | string | The description of the annotation. |
@@ -437,14 +470,14 @@ or if an error occured
 ```
 ___
 
-### POST /annotations/groups
+### POST /groups
 Inserts a new group record into the database.
 
 **Body**
-|          Name | Required |  Type   | Description                                                                                                                                                           |
-| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     `group_name`     | required | string | The name of the group. |
-|     `scene_settings` | required | string | The setting of the scene associated with the group. <br/><br/> This string is to be parsed as a json by the front end. It is assumed that the frontend will generate a string in the form a json, so it is unnecessary to reformat this string value. <br/><br/> There will typically be backslashes to preserve the inner quotation characters. Ex: "{\\"setting\\": \\"value\\"}"|
+| Name | Required | Type | Description |
+| ----:|:--------:|:----:| ----------- |
+| `group_name`     | required | string | The name of the group. |
+| `scene_settings` | required | string | The setting of the scene associated with the group. <br/><br/> This string is to be parsed as a json by the front end. It is assumed that the frontend will generate a string in the form a json, so it is unnecessary to reformat this string value. <br/><br/> There will typically be backslashes to preserve the inner quotation characters. Ex: "{\\"setting\\": \\"value\\"}"|
 
 Example Body:
 ```
@@ -454,7 +487,6 @@ Example Body:
 }
 
 ```
-
 
 **Response**
 
@@ -476,7 +508,7 @@ or if an error occured
 ```
 ___
 
-### PUT /annotations/groups
+### PUT /annotations/byId
 Updates the given group record with the given group data.
 
 **Body**
@@ -558,7 +590,7 @@ or if an error occured
 ```
 ___
 
-### PUT /annotations/byId
+### PUT /groups/byGroupName
 Updates the annotation record with the given ID with the given annotation data.
 
 **Body**
