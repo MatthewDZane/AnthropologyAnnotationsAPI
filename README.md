@@ -387,6 +387,37 @@ or if an error occured
 ```
 ___
 
+### GET /help
+Get help on the given endpoint. Get the avaiable endpoints if no endpoint is given.
+
+**Parameters**
+| Name | Required | Type | Description |
+| ----:|:--------:|:----:| ----------- |
+| `endpoint` | optional | string  | The endpoint to get help for. |
+
+**Response**
+```
+// No endpoint is provided
+Valid Endpoints = ["annotations", "annotations/byId", "annotations/byGroup","annotations/buUrl", "groups", "groups/byGroupName"]
+
+For more detailed documentation read the README: https://github.com/MatthewDZane/AnthropologyAnnotationsAPI/blob/main/README.md
+
+or
+
+// A valid endpoint is provided
+GET - [Get verb description for endpoint]
+POST - [Post verb description for endpoint]
+PUT - [Put verb description for endpoint]
+
+For more detailed documentation read the README: https: //github.com/MatthewDZane/AnthropologyAnnotationsAPI/blob/main/README.md
+
+or if an invalid endpoint is provided
+
+{
+    "error": "endpoint (invalid_endpoint) is not valid."
+}
+```
+___
 ### POST /annotations
 Inserts a new annotation record into the database.
 
