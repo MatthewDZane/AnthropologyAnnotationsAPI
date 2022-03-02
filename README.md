@@ -3,7 +3,7 @@
 # Table of Contents
 - [Setup](#setup)
     - [XAMPP](#xampp)
-- [API Endpoints](#api_endpoints)
+- [API Endpoints](#api-endpoints)
 - [Database](#database)
     - [Annotations](#annotations)
     - [Annotations_Group](#annotation_group)
@@ -32,6 +32,7 @@ These endpoints allow a user to read and modify the contents of the database.
 `HostName/DesiredName` [/annotations/byUrl](#get-annotationsbyurl) <br/>
 `HostName/DesiredName` [/groups](#get-groups) <br/>
 `HostName/DesiredName` [/groups/byGroupName](#get-groupsbygroupname) <br/>
+`HostName/DesiredName` [/help](#get-help) <br/>
 
 ### POST
 `HostName/DesiredName` [/annotations](#post-annotations) <br/>
