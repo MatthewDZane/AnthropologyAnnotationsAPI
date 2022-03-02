@@ -387,7 +387,7 @@ class UserModel extends Database
         }	
     }
 
-    public function updateGroup($currentGroupName, Group $group): bool {
+    public function updateGroup(string $currentGroupName, Group $group): bool {
         $query = "UPDATE annotation_group SET group_name = ?, sceneSettings = ?
                   WHERE group_name = ?";
 
@@ -409,4 +409,51 @@ class UserModel extends Database
             return false;
         }	
     }
+
+    public function getHelp(string $endpoint): string {
+        $readmeMessage = "For more detailed documentation read the README: " .
+                         "https://github.com/MatthewDZane/" . 
+                         "AnthropologyAnnotationsAPI/blob/main/README.md";
+        switch($endpoint) {
+            case "annotations":
+                return "GET - Get all of the annotations in the database.\n" .
+                       "POST - Inserts a new annotation record into the " . 
+                       "database.\n\n" . $readmeMessage;
+            case "annotations/byId":
+                return "GET - Get the annotation with the given ID.\n" .
+                       "PUT - Updates the given group record with the given" .
+                       " group data.\n\n" . $readmeMessage;
+            case "annotations/byGroup":
+                return "GET - Get all the annotations in the given group.\n\n" .
+                        $readmeMessage;
+            case "annotations/byUrl":
+                return "GET - Get all the annotations in the given url.\n\n" .
+                        $readmeMessage;
+            case "groups":
+                return "GET - Get all of the groups in the database.\n" .
+                       "POST - Inserts a new group record into the database." .
+                       "\n\n" . $readmeMessage;
+            case "groups/byGroupName":
+                return "GET - Get the group with the given group name.\n" .
+                       "PUT - Updates the annotation record with the given " . 
+                       "ID with the given annotation data.\n\n" . $readmeMessage;
+            case "help":
+                return "GET - Get help on the given endpoint. Get the " .
+                       "avaiable endpoints if no endpoint is given.\n\n" . 
+                       $readmeMessage;           
+            case "":
+                $valid_endpoints = array("annotations", "annotations/byId",
+                                         "annotations/byGroup", 
+                                         "annotations/buUrl", "groups",
+                                         "groups/byGroupName");
+                return "Valid Endpoints = [\"annotations\", " .
+                       "\"annotations/byId\", \"annotations/byGroup\"," .
+                       "\"annotations/byUrl\", \"groups\", " .
+                       "\"groups/byGroupName\"]\n\n" . $readmeMessage;
+            default:
+                throw new Exception("endpoint (" . $endpoint . 
+                                    ") is not valid." );
+        }
+    }
+
 }

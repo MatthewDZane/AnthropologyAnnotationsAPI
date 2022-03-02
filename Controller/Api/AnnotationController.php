@@ -269,7 +269,6 @@ class AnnotationController extends BaseController
     }
 
 
-
     public function performGroupsAction() {
         $responseData = "";
         $strErrorDescription = "";
@@ -322,6 +321,37 @@ class AnnotationController extends BaseController
         }
 
         $this->outputData($responseData, $strErrorDescription, $strErrorHeader);
+    }
+
+    public function performHelp() {
+        $responseData = "";
+        $strErrorDescription = "";
+        $strErrorHeader = "";
+        $requestMethod = strtoupper($_SERVER["REQUEST_METHOD"]);
+        $arrQueryStringParams = $this->getQueryStringParams();
+
+        $userModel = new UserModel();
+        if ($requestMethod == "GET") {
+            $endpoint = "";
+            if ($arrQueryStringParams && 
+                array_key_exists("endpoint", $arrQueryStringParams)) {
+                $endpoint = $arrQueryStringParams["endpoint"];  
+            }
+            
+            try {
+                $responseData = $userModel->getHelp($endpoint);
+            } catch (Exception $e) {
+                $strErrorDescription = $e->getMessage();
+                $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+            }
+        }
+        else {
+            $strErrorDescription = "Method not supported";
+            $strErrorHeader = "HTTP/1.1 422 Unprocessable Entity";
+        }
+
+        $this->outputData($responseData, $strErrorDescription, $strErrorHeader);
+ 
     }
 
     private function outputData($responseData, $strErrorDescription,

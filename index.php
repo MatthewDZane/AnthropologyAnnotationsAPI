@@ -5,12 +5,13 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode( '/', $uri);
 
 $validEndPoints = array("annotations" => array("byId", "byGroup", "byUrl"),
-                        "groups" => array("byGroupName"));
+                        "groups" => array("byGroupName"),
+                        "help" => array());
 
 // Verify that uri is valid
 if (!isset($uri[3]) || !isset($validEndPoints[$uri[3]]) || 
     (isset($uri[4]) && !in_array($uri[4], $validEndPoints[$uri[3]]))) {
-    header("HTTP/1.1 404 Not Found");
+    header("HTTP/1.1 401 Not Found");
     exit();
 }
 
@@ -47,6 +48,9 @@ switch ($uri[3]) {
         else {
             $objFeedController->performGroupsAction();
         }
+        break;
+    case "help":
+        $objFeedController->performHelp();
         break;
 }
 
