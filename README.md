@@ -357,7 +357,7 @@ or if an error occured
 ___
 
 ### GET /groups/byGroupName
-Get all of the groups in the database.
+Get the group with the given group name.
 
 **Parameters**
 | Name | Required | Type | Description |
