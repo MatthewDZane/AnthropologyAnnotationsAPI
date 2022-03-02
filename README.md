@@ -635,8 +635,8 @@ Updates the annotation record with the given ID with the given annotation data.
 Example Body:
 ```
 {
-    "current_group_name": "Old Group"
-    {
+    "current_group_name": "Old Group",
+    "group": {
         "group_name": "Updated Group",
         "scene_settings": "{\"setting\\": \"value\"}"
     }
