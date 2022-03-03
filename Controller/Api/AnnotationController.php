@@ -235,18 +235,28 @@ class AnnotationController extends BaseController
                     property_exists($jsonData, "current_group_name") &&
                     property_exists($jsonData, "group") &&
                     Group::isValidJson($jsonData->group)) {
-                    $group = Group::jsonToGroup($jsonData->group);
-
-                    if ($userModel->updateGroup($jsonData->current_group_name, 
-                                                $group)) {
-                        $group = $userModel->selectGroup($group->getGroupName());   
-                        $responseData = json_encode(array("message" => "The " . 
-                                        "group was updated successfully.",
-                                        "updated_group" => $group));
+                    
+                    $currentGroupName = $jsonData->current_group_name;
+                    $groupToUpdate = $userModel->selectGroup($currentGroupName);  
+                    if ($groupToUpdate != null) {
+                        $group = Group::jsonToGroup($jsonData->group);
+                        if ($userModel->updateGroup($currentGroupName, 
+                                                    $group)) {
+                            $group = $userModel->selectGroup($group->getGroupName());   
+                            $responseData = json_encode(array("message" => "The " . 
+                                            "group was updated successfully.",
+                                            "updated_group" => $group));
+                        }
+                        else {
+                            $strErrorDescription = $userModel->getLastError();
+                            $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                        }
                     }
                     else {
-                        $strErrorDescription = $userModel->getLastError();
-                        $strErrorHeader = "HTTP/1.1 500 Internal Server Error";
+                        $strErrorDescription = "The group named " . 
+                                                $currentGroupName . 
+                                                " is not a group";
+                        $strErrorHeader = "HTTP/1.1 400 Bad Request";
                     }
                 }
                 else {
