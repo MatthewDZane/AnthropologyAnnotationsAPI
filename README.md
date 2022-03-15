@@ -83,7 +83,7 @@ or
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -121,7 +121,7 @@ or
                 "y": 8,
                 "z": 7
             },
-            "scale": {
+            "scale3D": {
                 "x": 6,
                 "y": 5,
                 "z": 4
@@ -186,7 +186,7 @@ or
             "y": 3,
             "z": 4
         },
-        "scale": {
+        "scale3D": {
             "x": 5,
             "y": 6,
             "z": 7
@@ -249,7 +249,7 @@ or
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -287,7 +287,7 @@ or
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -351,7 +351,7 @@ or
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -389,7 +389,7 @@ or
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -523,7 +523,7 @@ Inserts a new annotation record into the database.
 |     `group_name`          | required | string | The name of the group that the annotation is associated with. |
 |     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
 |     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
-|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
+|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale3D" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale3D": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
 
 Example Body:
 ```
@@ -550,7 +550,7 @@ Example Body:
             "y": 3,
             "z": 4
         },
-        "scale": {
+        "scale3D": {
             "x": 5,
             "y": 6,
             "z": 7
@@ -596,7 +596,7 @@ Example Body:
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
@@ -671,7 +671,7 @@ Updates the given group record with the given group data.
 |     `group_name`          | required | string | The name of the group that the annotation is associated with. |
 |     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
 |     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
-|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
+|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale3D" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale3D": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
 
 Example Body:
 ```
@@ -699,7 +699,7 @@ Example Body:
             "y": 3,
             "z": 4
         },
-        "scale": {
+        "scale3D": {
             "x": 5,
             "y": 6,
             "z": 7
@@ -742,7 +742,7 @@ Example Body:
                 "y": 3,
                 "z": 4
             },
-            "scale": {
+            "scale3D": {
                 "x": 5,
                 "y": 6,
                 "z": 7
