@@ -1,5 +1,8 @@
 <?php
-require_once PROJECT_ROOT_PATH . "Model/Position.php";
+require_once PROJECT_ROOT_PATH . "Model/Transform.php";
+require_once PROJECT_ROOT_PATH . "Model/Quaternion.php";
+require_once PROJECT_ROOT_PATH . "Model/Point.php";
+
 
 class Annotation implements JsonSerializable  {
     private int $id;
@@ -9,9 +12,9 @@ class Annotation implements JsonSerializable  {
     private string $descriptionLink;
     private string $groupName;
 
-    private Position $cameraLocation;
-    private Position $lookAtPoint;
-    private Position $annotationLocation;
+    private Point $cameraLocation;
+    private Point $lookAtPoint;
+    private Transform $annotationTransform;
 
     private string $lastUpdated;
 
@@ -39,16 +42,16 @@ class Annotation implements JsonSerializable  {
         return $this->groupName; 
     }
 
-    public function getCameraLocation(): Position {
+    public function getCameraLocation(): Point {
         return $this->cameraLocation;
     }
 
-    public function getLookAtPoint(): Position {
+    public function getLookAtPoint(): Point {
         return $this->lookAtPoint;
     }
 
-    public function getAnnotationLocation(): Position {
-        return $this->annotationLocation;
+    public function getAnnotationTransform(): Transform {
+        return $this->annotationTransform;
     }
 
     public function getLastUpdated(): string {
@@ -80,16 +83,16 @@ class Annotation implements JsonSerializable  {
         $this->groupName = $groupName; 
     }
 
-    public function setCameraLocation(Position $cameraLocation): void {
+    public function setCameraLocation(Point $cameraLocation): void {
         $this->cameraLocation = $cameraLocation;
     }
 
-    public function setLookAtPoint(Position $lookAtPoint): void {
+    public function setLookAtPoint(Point $lookAtPoint): void {
         $this->lookAtPoint = $lookAtPoint;
     }
 
-    public function setAnnotationLocation(Position $annotationLocation): void {
-        $this->annotationLocation = $annotationLocation;
+    public function setAnnotationTransform(Transform $annotationTransform): void {
+        $this->annotationTransform = $annotationTransform;
     }
 
     public function setLast_Updated(string $lastUpdated): void {
@@ -98,9 +101,9 @@ class Annotation implements JsonSerializable  {
 
     public function __construct(int $id, string $url, string $title, 
                             string $description, string $descriptionLink,
-                            string $groupName, Position $cameraLocation,
-                            Position $lookAtPoint, 
-                            Position $annotationLocation,
+                            string $groupName, Point $cameraLocation,
+                            Point $lookAtPoint, 
+                            Transform $annotationTransform,
                             string $lastUpdated) {
         $this->id = $id;
         $this->url = $url;
@@ -111,7 +114,7 @@ class Annotation implements JsonSerializable  {
 
         $this->cameraLocation = $cameraLocation;
         $this->lookAtPoint = $lookAtPoint;
-        $this->annotationLocation = $annotationLocation;
+        $this->annotationTransform = $annotationTransform;
         $this->lastUpdated = $lastUpdated;
     }
 
@@ -125,7 +128,7 @@ class Annotation implements JsonSerializable  {
             "group_name" => $this->groupName,
             "camera_location" => $this->cameraLocation,
             "look_at_point" => $this->lookAtPoint,
-            "annotation_location" => $this->annotationLocation,
+            "annotation_transform" => $this->annotationTransform,
             "last_updated" => $this->lastUpdated,
         ];
     }
@@ -142,17 +145,17 @@ class Annotation implements JsonSerializable  {
               property_exists($json, "group_name") && 
               property_exists($json, "camera_location") && 
               property_exists($json, "look_at_point") && 
-              property_exists($json, "annotation_location"))) {
+              property_exists($json, "annotation_transform"))) {
             return false;
         }
 
         $cameraLocation = $json->camera_location;
         $lookAtPoint = $json->look_at_point;
-        $annotationLocation = $json->annotation_location;
+        $annotationTransform = $json->annotation_transform;
 
-        return Position::isValidJson($cameraLocation) && 
-               Position::isValidJson($lookAtPoint) &&
-               Position::isValidJson($annotationLocation);
+        return Point::isValidJson($cameraLocation) && 
+               Point::isValidJson($lookAtPoint) &&
+               Transform::isValidJson($annotationTransform);
     }
 
     public static function jsonToAnnotation(stdClass $json): Annotation {
@@ -161,14 +164,19 @@ class Annotation implements JsonSerializable  {
             $id = $json->id;
         }
 
-        $cameraLocation = Position::jsonToPosition($json->camera_location);
-        $lookAtPoint = Position::jsonToPosition($json->look_at_point);
-        $annotationLocation = Position::jsonToPosition($json->annotation_location);
+        $cameraLocation = Point::jsonToPoint($json->camera_location);
+        $lookAtPoint = Point::jsonToPoint($json->look_at_point);
+        $annotationLocation = Transform::jsonToTransform($json->annotation_transform);
+
+        $lastUpdated = "";
+        if (property_exists($json, "last_updated")) {
+            $lastUpdated = $json->last_updated;
+        }
 
         return new Annotation($id, $json->url, $json->title, $json->description,
                               $json->description_link, $json->group_name, 
                               $cameraLocation, $lookAtPoint,
-                              $annotationLocation, "");
+                              $annotationLocation, $lastUpdated);
     }
 }
 ?>

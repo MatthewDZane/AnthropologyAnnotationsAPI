@@ -1,8 +1,6 @@
 <?php
 require_once "Annotation.php";
 require_once "Group.php";
-require_once "Position.php";
-
 class Database
 {
     protected mysqli $connection;

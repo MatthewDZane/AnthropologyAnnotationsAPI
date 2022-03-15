@@ -69,18 +69,18 @@ class UserModel extends Database
 
         $cameraLocationJson = json_decode($row['camera_location']);
         $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-        $annotationLocationJson = json_decode($row['annotation_location']);
+        $annotationTransformJson = json_decode($row['annotation_transform']);
 
-        $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-        $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-        $annotationLocation = Position::jsonToPosition($annotationLocationJson); 
+        $cameraLocation = Point::jsonToPoint($cameraLocationJson);
+        $cameraLookAtPoint = Point::jsonToPoint($cameraLookAtPointJson);
+        $annotationTransform = Transform::jsonToTransform($annotationTransformJson); 
 
         $annotation = new Annotation($row['id'], $row['url'], $row['title'], 
                                      $row['description'], 
                                      $row['description_link'], 
                                      $row['group_name'],
                                      $cameraLocation, $cameraLookAtPoint,
-                                     $annotationLocation, $row['last_updated']);        
+                                     $annotationTransform, $row['last_updated']);        
 
         return $annotation;
     }
@@ -104,18 +104,18 @@ class UserModel extends Database
             while($row = $result->fetch_assoc()) {
                 $cameraLocationJson = json_decode($row['camera_location']);
                 $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-                $annotationLocationJson = json_decode($row['annotation_location']);
+                $annotationTransformJson = json_decode($row['annotation_transform']);
         
-                $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-                $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-                $annotationLocation = Position::jsonToPosition($annotationLocationJson);
+                $cameraLocation = Point::jsonToPoint($cameraLocationJson);
+                $cameraLookAtPoint = Point::jsonToPoint($cameraLookAtPointJson);
+                $annotationTransform = Transform::jsonToTransform($annotationTransformJson);
                 
                 $annotations[count($annotations)] = 
                     new Annotation($row['id'], $row['url'], $row['title'], 
                                 $row['description'], 
                                 $row['description_link'], $row['group_name'],
                                 $cameraLocation, $cameraLookAtPoint,
-                                $annotationLocation, $row['last_updated']);
+                                $annotationTransform, $row['last_updated']);
             }
         }
 
@@ -130,18 +130,18 @@ class UserModel extends Database
         
         $cameraLocationJson = json_decode($row['camera_location']);
         $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-        $annotationLocationJson = json_decode($row['annotation_location']);
+        $annotationLocationJson = json_decode($row['annotation_transform']);
 
-        $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-        $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-        $annotationLocation = Position::jsonToPosition($annotationLocationJson);
+        $cameraLocation = Point::jsonToPoint($cameraLocationJson);
+        $cameraLookAtPoint = Point::jsonToPoint($cameraLookAtPointJson);
+        $annotationTransform = Transform::jsonToTransform($annotationLocationJson);
         
         $annotation = new Annotation($row['id'], $row['url'], $row['title'], 
                                       $row['description'], 
                                       $row['description_link'], 
                                       $row['group_name'],
                                       $cameraLocation, $cameraLookAtPoint,
-                                      $annotationLocation, 
+                                      $annotationTransform, 
                                       $row['last_updated']);
         
         return $annotation;
@@ -166,18 +166,18 @@ class UserModel extends Database
             while($row = $result->fetch_assoc()) {
                 $cameraLocationJson = json_decode($row['camera_location']);
                 $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-                $annotationLocationJson = json_decode($row['annotation_location']);
+                $annotationLocationJson = json_decode($row['annotation_transform']);
         
-                $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-                $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-                $annotationLocation = Position::jsonToPosition($annotationLocationJson);
+                $cameraLocation = Point::jsonToPoint($cameraLocationJson);
+                $cameraLookAtPoint = Point::jsonToPoint($cameraLookAtPointJson);
+                $annotationTransform = Transform::jsonToTransform($annotationLocationJson);
                 
                 $annotations[count($annotations)] = 
                     new Annotation($row['id'], $row['url'], $row['title'], 
                                 $row['description'], 
                                 $row['description_link'], $row['group_name'],
                                 $cameraLocation, $cameraLookAtPoint,
-                                $annotationLocation, $row['last_updated']);
+                                $annotationTransform, $row['last_updated']);
             }
         }
 
@@ -193,18 +193,18 @@ class UserModel extends Database
             while($row = $result->fetch_assoc()) {
                 $cameraLocationJson = json_decode($row['camera_location']);
                 $cameraLookAtPointJson = json_decode($row['camera_look_at_point']);
-                $annotationLocationJson = json_decode($row['annotation_location']);
+                $annotationLocationJson = json_decode($row['annotation_transform']);
         
-                $cameraLocation = Position::jsonToPosition($cameraLocationJson);
-                $cameraLookAtPoint = Position::jsonToPosition($cameraLookAtPointJson);
-                $annotationLocation = Position::jsonToPosition($annotationLocationJson);
+                $cameraLocation = Point::jsonToPoint($cameraLocationJson);
+                $cameraLookAtPoint = Point::jsonToPoint($cameraLookAtPointJson);
+                $annotationTransform = Transform::jsonToTransform($annotationLocationJson);
                 
                 $annotations[count($annotations)] = 
                     new Annotation($row['id'], $row['url'], $row['title'], 
                                 $row['description'], 
                                 $row['description_link'], $row['group_name'],
                                 $cameraLocation, $cameraLookAtPoint,
-                                $annotationLocation, $row['last_updated']);
+                                $annotationTransform, $row['last_updated']);
             }
         }
 
@@ -253,7 +253,7 @@ class UserModel extends Database
             FOREIGN KEY (group_name) REFERENCES annotation_group(group_name),
             camera_location JSON,
             camera_look_at_point JSON,
-            annotation_location JSON,
+            annotation_transform JSON,
             last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )";
 
@@ -316,7 +316,7 @@ class UserModel extends Database
     public function insertAnnotation(Annotation $annotation): bool {
         $query = "INSERT INTO annotation (url, title, description, 
                 description_link, group_name, camera_location, 
-                camera_look_at_point, annotation_location) VALUES
+                camera_look_at_point, annotation_transform) VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?)";
         
         try {
@@ -331,12 +331,12 @@ class UserModel extends Database
             # create JSONs for the 3D points
             $cameraLocationJSON = json_encode($annotation->getCameraLocation());
             $lookAtPointJSON = json_encode($annotation->getLookAtPoint());
-            $annotationLocationJSON = json_encode($annotation->getAnnotationLocation());
+            $annotationTransformJSON = json_encode($annotation->getAnnotationTransform());
 
             $stmt->bind_param("ssssssss", $url, $title, $description,
                               $descriptionLink, $groupName,
                               $cameraLocationJSON, $lookAtPointJSON, 
-                              $annotationLocationJSON);
+                              $annotationTransformJSON);
 
             if ($stmt->execute() === TRUE) {
                 return true;
@@ -353,7 +353,7 @@ class UserModel extends Database
     public function updateAnnotation(Annotation $annotation): bool {
         $query = "UPDATE annotation SET url = ?, title = ?, description = ?, 
                 description_link = ?, group_name = ?, camera_location = ?,
-                camera_look_at_point = ?, annotation_location = ? WHERE id= ?";
+                camera_look_at_point = ?, annotation_transform = ? WHERE id= ?";
         
         try {
             $stmt = $this->connection->prepare($query);
@@ -368,13 +368,13 @@ class UserModel extends Database
             # create JSONs for the 3D points
             $cameraLocationJSON = json_encode($annotation->getCameraLocation());
             $lookAtPointJSON = json_encode($annotation->getLookAtPoint());
-            $annotationLocationJSON = json_encode($annotation->getAnnotationLocation());
+            $annotationTransformJSON = json_encode($annotation->getAnnotationTransform());
             
             $stmt->bind_param("ssssssssi", $url, $title, $description, 
                               $descriptionLink, $groupName, 
                               $cameraLocationJSON, $lookAtPointJSON, 
-                              $annotationLocationJSON, $id);
-
+                              $annotationTransformJSON, $id);
+                              
             if ($stmt->execute() === TRUE) {
                 return true;
             } else {

@@ -76,10 +76,23 @@ or
             "y": 5,
             "z": 6
         },
-        "annotation_location": {
-            "x": 7,
-            "y": 8,
-            "z": 9
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-02-02 22:22:22"
     },
@@ -101,10 +114,23 @@ or
             "y": 5,
             "z": 4
         },
-        "annotation_location": {
-            "x": 3,
-            "y": 2,
-            "z": 1
+        "annotation_transform": {
+            "rotation": {
+                "w": 10,
+                "x": 9,
+                "y": 8,
+                "z": 7
+            },
+            "scale": {
+                "x": 6,
+                "y": 5,
+                "z": 4
+            }
+            "translation": {
+                "x": 3,
+                "y": 2,
+                "z": 1
+            }
         },
         "last_updated": "2022-05-05 15:55:55"
     }
@@ -153,10 +179,23 @@ or
         "y": 5,
         "z": 6
     },
-    "annotation_location": {
-        "x": 7,
-        "y": 8,
-        "z": 9
+    "annotation_transform": {
+        "rotation": {
+            "w": 1,
+            "x": 2,
+            "y": 3,
+            "z": 4
+        },
+        "scale": {
+            "x": 5,
+            "y": 6,
+            "z": 7
+        }
+        "translation": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+        }
     },
     "last_updated": "2022-02-02 22:22:22"
 }
@@ -203,10 +242,23 @@ or
             "y": 5,
             "z": 6
         },
-        "annotation_location": {
-            "x": 7,
-            "y": 8,
-            "z": 9
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-02-02 22:22:22"
     },
@@ -228,10 +280,23 @@ or
             "y": 5,
             "z": 4
         },
-        "annotation_location": {
-            "x": 3,
-            "y": 2,
-            "z": 1
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-05-05 15:55:55"
     }
@@ -279,10 +344,23 @@ or
             "y": 5,
             "z": 6
         },
-        "annotation_location": {
-            "x": 7,
-            "y": 8,
-            "z": 9
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-02-02 22:22:22"
     },
@@ -304,10 +382,23 @@ or
             "y": 5,
             "z": 4
         },
-        "annotation_location": {
-            "x": 3,
-            "y": 2,
-            "z": 1
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-05-05 15:55:55"
     }
@@ -432,7 +523,7 @@ Inserts a new annotation record into the database.
 |     `group_name`          | required | string | The name of the group that the annotation is associated with. |
 |     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
 |     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
-|     `annotation_location` | required | json   | A json containing 3D coordinates of the annotation camera location, where x, y.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
 
 Example Body:
 ```
@@ -452,10 +543,23 @@ Example Body:
         "y": 5,
         "z": 6
     },
-    "annotation_location": {
-        "x": 7,
-        "y": 8,
-        "z": 9
+    "annotation_transform": {
+        "rotation": {
+            "w": 1,
+            "x": 2,
+            "y": 3,
+            "z": 4
+        },
+        "scale": {
+            "x": 5,
+            "y": 6,
+            "z": 7
+        }
+        "translation": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+        }
     }
 }
 
@@ -485,10 +589,23 @@ Example Body:
             "y": 5,
             "z": 6
         },
-        "annotation_location": {
-            "x": 7,
-            "y": 8,
-            "z": 9
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-02-13 13:19:08"
     }
@@ -554,7 +671,7 @@ Updates the given group record with the given group data.
 |     `group_name`          | required | string | The name of the group that the annotation is associated with. |
 |     `camera_location`     | required | json   | A json containing 3D coordinates of the annotation camera location.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
 |     `look_at_point`       | required | json   | A json containing 3D coordinates of the location that the annotation is looking at.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
-|     `annotation_location` | required | json   | A json containing 3D coordinates of the annotation camera location, where x, y.  <br/><br/> Format: \{"x": 1,"y": 2,"z": 3\}   |
+|     `annotation_transform` | required | json   | A json containing a "rotation" struct (Quaternion), "scale" struct (Point), "translation" struct (Point).  <br/><br/> Format: \{ "rotation": { "w": 0, "x": 1,"y": 2,"z": 3}, "scale": {"x": 1, "y": 2,"z": 3}, "translation": {"x": 1, "y": 2, "z": 3 } \}   |
 
 Example Body:
 ```
@@ -575,10 +692,23 @@ Example Body:
         "y": 5,
         "z": 6
     },
-    "annotation_location": {
-        "x": 7,
-        "y": 8,
-        "z": 9
+    "annotation_transform": {
+        "rotation": {
+            "w": 1,
+            "x": 2,
+            "y": 3,
+            "z": 4
+        },
+        "scale": {
+            "x": 5,
+            "y": 6,
+            "z": 7
+        }
+        "translation": {
+            "x": 8,
+            "y": 9,
+            "z": 10
+        }
     }
 }
 ```
@@ -605,10 +735,23 @@ Example Body:
             "y": 5,
             "z": 6
         },
-        "annotation_location": {
-            "x": 7,
-            "y": 8,
-            "z": 9
+        "annotation_transform": {
+            "rotation": {
+                "w": 1,
+                "x": 2,
+                "y": 3,
+                "z": 4
+            },
+            "scale": {
+                "x": 5,
+                "y": 6,
+                "z": 7
+            }
+            "translation": {
+                "x": 8,
+                "y": 9,
+                "z": 10
+            }
         },
         "last_updated": "2022-02-13 13:19:08"
     }

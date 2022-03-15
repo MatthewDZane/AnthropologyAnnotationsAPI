@@ -1,5 +1,5 @@
 <?php
-class Position implements JsonSerializable {
+class Point implements JsonSerializable {
     protected float $x;
     protected float $y;
     protected float $z;
@@ -35,8 +35,8 @@ class Position implements JsonSerializable {
                property_exists($json, "z");
     }
 
-    public static function jsonToPosition(stdclass $json): Position {
-        return new Position($json->x, $json->y, $json->z);
+    public static function jsonToPoint(stdclass $json): Point {
+        return new Point($json->x, $json->y, $json->z);
     }
 }
 ?>
